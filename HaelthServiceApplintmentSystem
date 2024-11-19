@@ -1,0 +1,171 @@
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Scanner;
+
+// 基础类 HealthProfessional
+class HealthProfessional {
+    private int id;
+    private String name;
+    private String description;
+
+    public HealthProfessional(int id, String name, String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
+        return "HealthProfessional{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
+}
+
+// 子类 GeneralPractitioner
+class GeneralPractitioner extends HealthProfessional {
+    public GeneralPractitioner(int id, String name, String description) {
+        super(id, name, description);
+    }
+}
+
+// 子类 Specialist
+class Specialist extends HealthProfessional {
+    public Specialist(int id, String name, String description) {
+        super(id, name, description);
+    }
+}
+
+// 预约类 Appointment
+class Appointment {
+    private String patientName;
+    private Date preferredTime;
+    private HealthProfessional doctor;
+
+    public Appointment(String patientName, Date preferredTime, HealthProfessional doctor) {
+        this.patientName = patientName;
+        this.preferredTime = preferredTime;
+        this.doctor = doctor;
+    }
+
+    public String getPatientName() {
+        return patientName;
+    }
+
+    public Date getPreferredTime() {
+        return preferredTime;
+    }
+
+    public HealthProfessional getDoctor() {
+        return doctor;
+    }
+
+    @Override
+    public String toString() {
+        return "Appointment{" +
+                "patientName='" + patientName + '\'' +
+                ", preferredTime=" + new SimpleDateFormat("HH:mm").format(preferredTime) +
+                ", doctor=" + doctor +
+                '}';
+    }
+}
+
+public class HealthServiceAppointmentSystem {
+    private static List<Appointment> appointments = new ArrayList<>();
+    private static final HealthProfessional gp = new GeneralPractitioner(1, "Dr. Smith", "General Practitioner");
+    private static final HealthProfessional specialist = new Specialist(2, "Dr. Jones", "Specialist in Cardiology");
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("1. Add Appointment");
+            System.out.println("2. Cancel Appointment");
+            System.out.println("3. Show Appointments");
+            System.out.println("4. Exit");
+            System.out.print("Choose an option: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            switch (choice) {
+                case 1:
+                    addAppointment(scanner);
+                    break;
+                case 2:
+                    cancelAppointment(scanner);
+                    break;
+                case 3:
+                    showAppointments();
+                    break;
+                case 4:
+                    System.out.println("Exiting...");
+                    scanner.close();
+                    return;
+                default:
+                    System.out.println("Invalid option. Please try again.");
+            }
+        }
+    }
+
+    private static void addAppointment(Scanner scanner) {
+        System.out.print("Enter patient name: ");
+        String patientName = scanner.nextLine();
+        System.out.print("Enter preferred time (HH:mm): ");
+        String time = scanner.nextLine();
+        System.out.print("Enter doctor ID (1 for GP, 2 for Specialist): ");
+        int doctorId = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        HealthProfessional selectedDoctor = doctorId == 1 ? gp : specialist;
+        try {
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time.split(":")[0]));
+            calendar.set(Calendar.MINUTE, Integer.parseInt(time.split(":")[1]));
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            appointments.add(new Appointment(patientName, calendar.getTime(), selectedDoctor));
+            System.out.println("Appointment added successfully.");
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid time format. Please use HH:mm.");
+        }
+    }
+
+    private static void cancelAppointment(Scanner scanner) {
+        System.out.print("Enter patient name to cancel: ");
+        String patientName = scanner.nextLine();
+        boolean removed = false;
+        for (int i = 0; i < appointments.size(); i++) {
+            if (patientName.equals(appointments.get(i).getPatientName())) {
+                appointments.remove(i);
+                removed = true;
+                break; // 退出循环，因为我们已经找到了并移除了预约
+            }
+        }
+        if (removed) {
+            System.out.println("Appointment cancelled successfully.");
+        } else {
+            System.out.println("No appointment found with that patient name.");
+        }
+    }
+
+
+    private static void showAppointments() {
+        if (appointments.isEmpty()) {
+            System.out.println("No appointments available.");
+        } else {
+            for (Appointment appointment : appointments) {
+                System.out.println(appointment);
+            }
+        }
+    }
+}

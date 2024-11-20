@@ -6,8 +6,8 @@ import java.util.Scanner;
 
 
 public class HealthServiceAppointmentSystem {
-    private static List<Appointment> appointments = new ArrayList<>();
-    // 创建相应的医生人数
+    private static List<Appointment> appointmentsList = new ArrayList<>();
+
     private static final HealthProfessional gp1 = new GeneralPractitioner(1, "Dr. Smith", "General Practitioner");
     private static final HealthProfessional gp2 = new GeneralPractitioner(2, "Dr. Doe", "General Practitioner");
     private static final HealthProfessional gp3 = new GeneralPractitioner(3, "Dr. Adams", "General Practitioner");
@@ -31,10 +31,10 @@ public class HealthServiceAppointmentSystem {
                     addAppointment(scanner);
                     break;
                 case 2:
-                    cancelAppointment(scanner);
+                    cancelBooking(scanner);
                     break;
                 case 3:
-                    showAppointments();
+                    printExistingAppointments();
                     break;
                 case 4:
                     System.out.println("Exiting...");
@@ -49,7 +49,7 @@ public class HealthServiceAppointmentSystem {
     private static void addAppointment(Scanner scanner) {
         System.out.print("Enter patient name: ");
         String patientName = scanner.nextLine();
-        System.out.print("Enter patient mobile: "); // 添加输入电话号码
+        System.out.print("Enter patient mobile: ");
         String patientMobile = scanner.nextLine();
         System.out.print("Enter preferred time (HH:mm): ");
         String time = scanner.nextLine();
@@ -85,36 +85,36 @@ public class HealthServiceAppointmentSystem {
             calendar.set(Calendar.MINUTE, Integer.parseInt(time.split(":")[1]));
             calendar.set(Calendar.SECOND, 0);
             calendar.set(Calendar.MILLISECOND, 0);
-            appointments.add(new Appointment(patientName, patientMobile, calendar.getTime(), selectedDoctor));
+            appointmentsList.add(new Appointment(patientName, patientMobile, calendar.getTime(), selectedDoctor));
             System.out.println("Appointment added successfully.");
         } catch (NumberFormatException e) {
             System.out.println("Invalid time format. Please use HH:mm.");
         }
     }
 
-    private static void cancelAppointment(Scanner scanner) {
-        System.out.print("Enter patient name to cancel: ");
-        String patientName = scanner.nextLine();
+    private static void cancelBooking(Scanner scanner) {
+        System.out.print("Enter patient mobile to cancel: ");
+        String patientMobile = scanner.nextLine();
         boolean removed = false;
-        for (int i = 0; i < appointments.size(); i++) {
-            if (patientName.equals(appointments.get(i).getPatientName())) {
-                appointments.remove(i);
+        for (int i = 0; i < appointmentsList.size(); i++) {
+            if (patientMobile.equals(appointmentsList.get(i).getPatientMobile())) {
+                appointmentsList.remove(i);
                 removed = true;
-                break; // 退出循环，因为我们已经找到了并移除了预约
+                break;
             }
         }
         if (removed) {
             System.out.println("Appointment cancelled successfully.");
         } else {
-            System.out.println("No appointment found with that patient name.");
+            System.out.println("Cancellation error: No appointment found with the phone number " + patientMobile);
         }
     }
 
-    private static void showAppointments() {
-        if (appointments.isEmpty()) {
+    private static void printExistingAppointments() {
+        if (appointmentsList.isEmpty()) {
             System.out.println("No appointments available.");
         } else {
-            for (Appointment appointment : appointments) {
+            for (Appointment appointment : appointmentsList) {
                 System.out.println(appointment);
             }
         }

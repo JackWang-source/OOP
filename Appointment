@@ -1,0 +1,36 @@
+package com.wangxinchi.healthservice;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+class Appointment {
+    private String patientName;
+    private Date preferredTime;
+    private HealthProfessional doctor;
+
+    public Appointment(String patientName, Date preferredTime, HealthProfessional doctor) {
+        this.patientName = patientName;
+        this.preferredTime = preferredTime;
+        this.doctor = doctor;
+    }
+
+    public String getPatientName() {
+        return patientName;
+    }
+
+    public Date getPreferredTime() {
+        return preferredTime;
+    }
+
+    public HealthProfessional getDoctor() {
+        return doctor;
+    }
+
+    @Override
+    public String toString() {
+        return "Appointment{" +
+                "patientName='" + patientName + '\'' +
+                ", preferredTime=" + new SimpleDateFormat("HH:mm").format(preferredTime) +
+                ", doctor=" + doctor +
+                '}';
+    }
+}

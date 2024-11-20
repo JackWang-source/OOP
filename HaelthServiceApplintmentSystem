@@ -7,8 +7,12 @@ import java.util.Scanner;
 
 public class HealthServiceAppointmentSystem {
     private static List<Appointment> appointments = new ArrayList<>();
-    private static final HealthProfessional gp = new GeneralPractitioner(1, "Dr. Smith", "General Practitioner");
-    private static final HealthProfessional specialist = new Specialist(2, "Dr. Jones", "Specialist in Cardiology");
+    // 创建相应的医生人数
+    private static final HealthProfessional gp1 = new GeneralPractitioner(1, "Dr. Smith", "General Practitioner");
+    private static final HealthProfessional gp2 = new GeneralPractitioner(2, "Dr. Doe", "General Practitioner");
+    private static final HealthProfessional gp3 = new GeneralPractitioner(3, "Dr. Adams", "General Practitioner");
+    private static final HealthProfessional specialist1 = new Specialist(4, "Dr. Jones", "Specialist in Cardiology");
+    private static final HealthProfessional specialist2 = new Specialist(5, "Dr. Johnson", "Specialist in Neurology");
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -45,20 +49,43 @@ public class HealthServiceAppointmentSystem {
     private static void addAppointment(Scanner scanner) {
         System.out.print("Enter patient name: ");
         String patientName = scanner.nextLine();
+        System.out.print("Enter patient mobile: "); // 添加输入电话号码
+        String patientMobile = scanner.nextLine();
         System.out.print("Enter preferred time (HH:mm): ");
         String time = scanner.nextLine();
-        System.out.print("Enter doctor ID (1 for GP, 2 for Specialist): ");
+        System.out.print("Enter doctor ID (1-3 for GP, 4-5 for Specialist): ");
         int doctorId = scanner.nextInt();
         scanner.nextLine(); // Consume newline
 
-        HealthProfessional selectedDoctor = doctorId == 1 ? gp : specialist;
+        HealthProfessional selectedDoctor = null;
+        switch (doctorId) {
+            case 1:
+                selectedDoctor = gp1;
+                break;
+            case 2:
+                selectedDoctor = gp2;
+                break;
+            case 3:
+                selectedDoctor = gp3;
+                break;
+            case 4:
+                selectedDoctor = specialist1;
+                break;
+            case 5:
+                selectedDoctor = specialist2;
+                break;
+            default:
+                System.out.println("Invalid doctor ID.");
+                return;
+        }
+
         try {
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time.split(":")[0]));
             calendar.set(Calendar.MINUTE, Integer.parseInt(time.split(":")[1]));
             calendar.set(Calendar.SECOND, 0);
             calendar.set(Calendar.MILLISECOND, 0);
-            appointments.add(new Appointment(patientName, calendar.getTime(), selectedDoctor));
+            appointments.add(new Appointment(patientName, patientMobile, calendar.getTime(), selectedDoctor));
             System.out.println("Appointment added successfully.");
         } catch (NumberFormatException e) {
             System.out.println("Invalid time format. Please use HH:mm.");
@@ -82,7 +109,6 @@ public class HealthServiceAppointmentSystem {
             System.out.println("No appointment found with that patient name.");
         }
     }
-
 
     private static void showAppointments() {
         if (appointments.isEmpty()) {

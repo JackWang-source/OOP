@@ -4,17 +4,23 @@ import java.util.Date;
 
 class Appointment {
     private String patientName;
+    private String patientMobile; // 添加电话号码
     private Date preferredTime;
     private HealthProfessional doctor;
 
-    public Appointment(String patientName, Date preferredTime, HealthProfessional doctor) {
+    public Appointment(String patientName, String patientMobile, Date preferredTime, HealthProfessional doctor) {
         this.patientName = patientName;
+        this.patientMobile = patientMobile;
         this.preferredTime = preferredTime;
         this.doctor = doctor;
     }
 
     public String getPatientName() {
         return patientName;
+    }
+
+    public String getPatientMobile() { // 获取电话号码的方法
+        return patientMobile;
     }
 
     public Date getPreferredTime() {
@@ -29,6 +35,7 @@ class Appointment {
     public String toString() {
         return "Appointment{" +
                 "patientName='" + patientName + '\'' +
+                ", patientMobile='" + patientMobile + '\'' + // 打印电话号码
                 ", preferredTime=" + new SimpleDateFormat("HH:mm").format(preferredTime) +
                 ", doctor=" + doctor +
                 '}';
